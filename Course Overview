@@ -1,0 +1,464 @@
+---------
+Cloud: is another machine.
+	- Private
+	- Public
+	- Hybrid
+
+------------
+
+Why Cloud/Azure?
+	- High availability - 99.9% (3 nine), 99.99% (4 nine), 99.999% (5 nine)
+	- Scalability
+	- Elasticity
+	
+------------
+Azure Subscription:
+	- EA
+	- Pay as you go
+	- Free Trial
+
+----------
+Azure Subscription structure:
+Management groups -
+	- (may have Management groups under itself again) Management groups
+		- Subscription
+			- Resource Groups
+				- Resources (VMs, Database etc)
+-----------
+
+Different options to create VM:
+	- Compute optimized
+	- Memory optimized
+	- IO optimized
+	- GPU optimized
+	- General purpose (balanced)
+	- High performance
+
+--------
+Availability Options:
+	- Availability Set
+		- Fault domain - physically separating the installation of VMs among servers
+		- Update domain - under same server different instances of VMs
+	- Availability Zone - zones are like different buildings where we can choose to install VMs so if something goes wrong 
+		- Zone 1
+		- Zone 2
+		- Zone 3
+		
+-------------
+	
+VM Monitoring:
+	- Enabling all the log options that we want VM to send to Azure.
+
+Virtual Machine Scale Set: (Creating multiple VMs through one set)
+	- Scaling the VMs. - we can set min/max range for virtual machine
+	
+--------------
+Azure Powershell:
+New standerd is AZ Module. it needs powershell 6. Az is actually is azure extension on power shell.
+
+Logging into Powershell:
+	command - Connect-AzAccount
+
+Create resource group first
+
+Create a VM using powershell
+	New-AzVM -ResourceGroupName "" -Name "newVM name" -Location "" -VirtualNetworkName "" -SubnetName "" -SecurityGroupName "" -PublicIpAddressName "" -OpenPorts "ports comma separated without quots"
+	
+	it will ask to create user and password after this. Azure takes the other values as default.
+
+---------
+
+Stop a VM:
+	stop-azvm -ResourceGroupName "rg name" -Name "vm name"
+
+Start a VM:
+	start-azvm -ResourceGroupName "rg name" -Name "vm name"
+---------
+
+VM Template:
+
+	ARM Template:
+		- schema: url of this template on azure
+		- variables: variables are being created here
+		- resources: 
+		- output: 
+	Parameter File: it contains values for variables of the template mentioned above.
+
+------------
+
+Template Detail:
+	Resources:
+		NetworkInterface - 
+		NetworksecurityGroup - 
+		DependsOn - resource dependency sequence.
+	Security:
+	VNet:
+	PublicIpAddress:
+	etc..
+Template gets created on the basis of the parameters or options we have chosen while creating it.
+---------
+
+Working with ARM template:
+	- Go to parameters
+		- change vm name
+		- change public IP
+		- 
+(if you mention same name for resource azure will check if everything is same it will just do nothing... its called DSC. So this will not hurt the existing and will not create new.)
+
+Deploy using template and powershell:
+	- set execution policy to false
+	- ./deploy.ps1 -subscriptionId "" -ResourceGroupName "" -DeploymentName ""
+if powershell shows username at the end in output task succeeded.
+
+-----------
+Deploy a Linux VM using ARM template and pwoershell:
+	- In template find image reference and give it a image name available in azure (RHEL is one of it).
+
+-----------
+
+How to encrypt a VM operating system disk on azure?
+Answer: using keyvault
+Machien and keyvault must be in same region.
+
+KeyVault:
+	- Create a key
+	- on VM -
+		- Go to disks
+		- open azure cloud shell
+		- set it using a storage account
+		- search on browser for "encrypt a virtual machine"
+		- set variables for this script 
+			- keyvault url
+			- resourceId
+			- keyId
+		- run the command to set encryption
+-------------
+
+
+Configure Diagnostic Options:
+	- go to RG
+	- Diagnostic Logs/settings
+	
+Azure Monitor: is the common dashboard for all diagnostics of all RGs.
+	- Diagnostic settings tab on menu and then we can click on any resource specifiaclly.
+
+Enable agent to send diagnostics to azure while creating VM or resource.
+
+For VM:
+	Performance counters
+		Basic
+			every 60 seconds send logs about :
+				CPU
+				Memory
+				Disk
+				Network etc
+		Custom
+			more detailed information about processor, memory
+	
+	Logs - To collect VM logs from different areas
+		Application 
+		Security
+		System
+	
+	Crash Dumps: Save crash dumps if something fails
+	Sink:
+---------------
+
+Create a baseline for resources:
+	Baseline is having each of your resource as a script or ARM template so if anything goes wrong you can come to a base version easily.
+	
+	One way of doing this:
+	- Go to resource group
+	- Deployments on right top
+	- download template and parameter and keep them. its your baseline.
+	
+	The other way:
+	- go to indivisual resource
+	- Automation script on let menu: this will generate a the script for the resource latest at the moment.
+	
+	First way is better as mostly deployment happens at RG level.
+	
+	The another way:
+	- using powershell
+	- Create a powershell script with all the settings and keep it up to date. this can later be run anywhere changing the regions or other fields.
+
+------------
+
+Create and test Alerts:
+	- select resource
+	- configrue signal logic - select event to alert(stop is one of the option)
+	- Define Alert detail:
+		name
+		description
+		
+	- Define Action: what to do when alert happens:
+		- email to azure owner role people.
+		- and many other options
+To test it, go to resource and stop that. Now go to RG >  Activity Log and verify the alert log.
+in Azure monitor also we see alerts.
+
+----------
+
+Create and test matrics:
+	Azure Monitor > Metrics (left menu)
+	- Add chart
+		- Add different metrics like network-in, netwowork-out etc
+	- If you want to save a chart move it to dashboard, else when you come back to metrics filters would be reset.
+
+--------------
+
+Action Groups:
+	Azure Monitor > Alerts > Action groups
+	action groups are the groups of multiple actions that fires when an alert happens. (we set it to email to owners while working on alerts.)
+	Example: if VM stops do the below:
+				- email
+				- sms
+				- run a azure function that does something.
+---------
+
+Managing Azure costs:
+	
+	One way to do:
+		
+		Subscriptio:
+			Cost analysis: shows resources and day-by-day cost for the resource.
+			There are filter for resource group.
+			
+	Other way:
+		- All services> Cost Management Billing
+		- Select subscriptionId
+		
+	Cost Management:
+		Budget - EA
+		Cost Analysis - EA
+		Advvisor Recommendation - For All
+		Cloudyn - it pulls the data from our subscription and shows the costs. Also recommend the ways to reduce or optimize for your subscription.
+---------
+
+Log Analytics:
+	
+	All services > Log Analytics
+	it connects the logs from resources so we can visit all the logs at one place.
+	- Logs menu > type your query here and using data source, count and more metrics. Then you can filter the same query from left menu for different activity status.
+	- We can tie the alert to log analytics.
+	- Very useful for searching through Production resources in order to find errors or issues customers reporting.
+
+-------------
+
+Create a storage:
+	All service > storage
+		Basic:
+			- choose subscription
+			- choose or creare RG
+			- name
+			- location
+			- Performance:
+				Standerd: HDD
+				Premium: SSD
+			- Account type: blob is public
+			- replication:
+				- locally redundant: in same region multiple replication
+				- globally
+			- Access Tier:
+				- Hot: choose this for frequent data access
+				- Cold: Cheaper: for archive or less frequent IO
+
+		Advanced:
+			- SSL requered
+			- Virtual Network: Choose all or selected network. All would be public/ selected would private.
+		Tags:
+			we can set the tags for the resource here.
+
+	This will create a storage account. Now lets add Virtual network to this:
+		left menu > Firewall and virtual network
+			- Create virtual network
+			we can add firewall for IP or IP ranges to access this virtual network.
+
+-------------
+
+Manage Access Keys for storage account:
+	Access Keys:
+		Left menu > Access keys
+		Why 2 or more keys? so you can switch to second and then can go to regenerate the first if you want to.
+	Left menu > Shared Access Signature:
+		Set various permissions on signature and instead of sharing key share this new connection string generated from shared access signature that has all these permission applied.
+		
+	If we change the key, we need to generate the signatures again with new key to work.
+
+-------------
+Azure storge explorer:
+	One way: 
+		On storage page  > Open Explorer: we can download, upload files and folders from here to the storage. Basically its a file manager for the selected storage.
+	Other way: download desktop application.
+
+-------------
+Set log analytics for Storage:
+	All services > Log analytics > Logs
+	
+------------
+
+Configure Storage redundancy: Microsoft keeps 3 copies.
+	storage > configuration
+		- Locally redundant storage(LRS): same data center 3 copies
+		- Zone RS: single region different data centers
+		- Geo RS:
+		- And some more
+------------
+
+Manage Virtual Network:
+	- Create new virtual network
+		- name
+		- Address space: Any IP address or range. Its private ip (starts with 10.)
+		- resource group
+		- subnet: every Vnet must have a subnet. subent is part of ip address selected above. If we need to devide the network in subnetwork we can use multiple subnet in a network. Read CIDR as well - it defines the range of subnet.
+		- DDos: protection for vnet.
+		- Service Endpoint: security feature - we allow the network to connect to different service. 
+		- Firewall: can be added to v net.
+	
+	- Check different options from left menu for the v net created.
+		- 5 IP addresses are being reserved by azure from the number that you created as part of subnet.
+-----------------
+
+Creating Public IP:
+	Create:
+		Name
+		SKU: is for load balancing.
+		IP version: IPV4/6
+		IP address assignment: Dynamic/Static - dynamic by default
+		DNS name - this is domain name, and can be mapped to custom domain name.
+		subscription
+		resource group
+		location
+		
+---------------
+Routs:
+	Create new resources > route table:routs can be used to route the request from a subnet to another(maybe a firewall) or for other purposes.
+
+---------------
+
+Connectivity between networks:
+
+
+---------------
+
+Vnet to Vnet connections:
+	Virtual network gateway is used to do this. we get charged on a monthly basis for this.
+	all the vnets that we want to connect we need to create a gateway and both each of this would be charged.
+	- Create a subnet (subnet ip address must be under VNet IP range)
+	- Choose Vnet
+	- Choose SKU (plan)
+	
+--------------
+
+Virtual Private Network:
+	
+	Point to Site VPN:
+		From computer to Azure site vpn. install vpn client on computer and install virtual network gateway on azure virtual network. And with this setup we connect.
+	Site to Site VPN:
+		To connect one one whole network(corporate) through VPN. gateway need to be setup on both the sites. This is fast
+		
+		
+---------------
+
+Express Route
+
+---------------
+Express Route Direct:
+	Even higher speed. You don't need to depend on a internet provider to connect to your azure resources but directly through microsoft you connect. When massive data ingestion requirement is there we need to go this route. 
+	You must have internal network to support large (100 GB per second) data ingestion.
+
+---------------
+
+Azure Active Directory:
+
+---------------
+Assign a custom domain to Azure AD:
+
+---------------
+
+Upgrade Azure active directory to Premium P2
+	Azure AD identity protection
+	
+
+---------------
+
+AD Access Management
+		Access Reviews: review and reduce group permissions. You do need a Premium P2 account for this.
+		We select a role from group to review everyone or defined members from that group for their access. It can be done daily/weekly/monthly. And we can set some notifiations and other settings while creating review.
+		
+---------------
+
+Hybrid Identities:
+	Hybrid = onpremise AD + Azure AD
+	- you need to install Azure AD connect on network configrue that for onpremise network and sync it with Azure AD.
+	- Federation: Another system to authenticate and host uesr details.
+	- SSO : 
+	- Pass through authentication.
+	
+	
+----------------
+Azure site recovery: its a disaster recovery tool. Its a manual failover that can be intiated in case of disaster.
+	- Recovery services vault
+	- 
+-------------
+Prepare ASR :
+	- Site recovery
+-------------
+
+Azure vCenter Converter
+
+-----------
+Serverless Options:
+	- Functions
+	- Logic Apps
+------------
+Create FunctionApp:
+----------------
+Code an Azure Function
+-----------------
+Create an LogicApp
+------------
+Event Grid
+-------------
+Load Balancing: 
+	- Load Balancer: 
+		its fairly a dumb device. and decide the traffic ditribution using source IP, destination IP, source port, destination port, protocol. It supports upto 1000 instances.
+		- Create a load balancer
+		- Adding avaialability set(having 3 VMs) to load balancer
+		- Add backend pool:
+			Name
+			Associated to: 
+				avaialability set - it should be in same region.
+			Add VMs using network interface card.
+			click -> OK
+			
+		- Health Probes: If a vm in pool does not respond load balancer kick it out of pool. Health probe is to check iteratively the VMs/application if its working.
+			Name
+			IP version
+			Port
+			interval (time interval)
+			
+		- Load balancing rules: Rules to 
+			- IP address
+			  Load balancer port(accepts traffic)
+			  VMs port
+			  Health probe
+			  
+	Once we have these 3 setups, loadbalancer is ready to use.
+		- Adding a second -IP to existing load balancer: In case load balancer manages multiple applications.
+			By adding multiple rules having different backend port we can do this. Also if we do this we should have a separate health probe for this.
+		
+			
+	- Application Gateway: it is intelligent than load balancer. Again VMs and gateway shold be in same location.
+		Create Application Gateway:
+			- Name
+			  Tier
+			  Capacity type: Automatic/Manual
+			  Resource Group
+			  Location
+			  Availability Zones
+			  And add virtual network and some more settigns.
+		Backend Pool: this accepts VMs, App services, Fully qualified domain names.
+		Rules: can be added additionally using path-based string. so /api goes to one server and /domain to other server behind 
+
+
