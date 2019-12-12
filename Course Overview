@@ -461,4 +461,51 @@ Load Balancing:
 		Backend Pool: this accepts VMs, App services, Fully qualified domain names.
 		Rules: can be added additionally using path-based string. so /api goes to one server and /domain to other server behind 
 
+--------------
+Azure AD Multifactor Authentication:
+	Multifactor authentication can be enabled only for the uesrs who are AD users with same domain name. not like gmail/yahoo(guest users)
+	
+--------
+Azure AD Conditional Access
+	its a policy that can be activated for some selected roles. We can create a new policy other than the default one.
+	- Select users
+	- select locations
+	- conditions - the devices, apps, locations, 
 
+Trusted locations can be used by defining IP address in Conditional Access -> Names Locations
+
+---------------
+Azure AD - Setup Fraud Alerts:
+	Using this users account can be blocked if they reported fraud. Those would be listed on blocked users and support team or us can unblock them manually.
+-----------
+
+Onetime Bypass:
+	Users can be added to bypass the multifactor authentication from here.
+	
+-----------
+MFA (Multi Factor Auth):
+	- Cloud based MFA:
+		- Trusted IPs: IPs can be added to avoid multifactor auth from given IPs.
+		- Verification options: 
+			Phone call
+			Text Message
+			Mobile App
+			Verification code from mobile app or hardware token
+			
+------------
+Roles Based Access/Authorization:
+	- Go to resource group -> Access Control(IAM): this can be done on subscription level, resource level, resource group level.
+		- Check Access - type username and find what acess he/she has
+		- Role Assignment:
+			Add role assignment:
+				Important roles:
+					Owner: manage all and grant all permissions
+					Reader: See the resources but cannot make any change(read only)
+					Contributer: create/delete/manage resources but cannot grant permissions to other users.
+------------
+Create Custom Role Based Aaccess Roles:
+	This can be done using powershell. Take a existing role json file and modify the file for your permission needs
+
+------------
+Custom RBAC Code Sample:
+	on github search for this and azurecitadel.com for more handson lab.
