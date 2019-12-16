@@ -509,3 +509,79 @@ Create Custom Role Based Aaccess Roles:
 ------------
 Custom RBAC Code Sample:
 	on github search for this and azurecitadel.com for more handson lab.
+------------
+Create App Service Web App:
+	Its PaaS model.
+		- Name
+		  Subscription
+		  Resource Group
+		  OS - Windows/ Linux
+		  Publish: Code/ Docker image
+		  App Service plan
+			- Name
+			  Location
+			  Pricing 
+				- DEv/Test, Production, Isolated(advanced)
+			  Click - Create
+
+If we go to resource group we can see app service and app service plan created. 
+		  Deployment Center: Here you can connect with git/vsts etc.
+		  Deployment Slots: Staging/Dev/Prod kind of slots can be created and given permissions to upload using slots.
+		  
+------------
+App Service Container App:
+	Create Web App. Select OS as Linux and Publish as Docker Image.
+	Configure: Single Container/ Docker Compose/ Kubernetes
+	
+	Deployment Center: Configure: options are different now, Azure Devops is there.
+------------
+Upload Web Jobs:
+	Web Apps:
+		settings:
+			web jobs
+------------
+Using Powershell to deploy Web App
+	
+------------
+Introduction to Service Fabric:
+	microsoft's style of doing microservice architechture.
+	How microservcies different from monolithic app?
+	
+	Example:
+		User profile service
+		Shopping Cart service
+		etc..
+------------
+Service Fabric Containers:
+	
+------------	
+Create Service Fabric App using CLI:
+	- create directory
+	  create resource group
+	  create service fabric clustor
+	  
+------------
+Managing Service Fabric App using CLI:
+	
+------------
+Reliable Service Model:
+	- Reliable Service API:
+		- Query service facric itself
+		  and some more services
+	Why:
+		Relieable
+		Available
+		
+Actors Model:
+	Actors communicate through messages. 
+	Similar to objects or MVC "Controller"
+	Messages instead of method calls
+	isolated from each others
+	Examples:
+		User
+		Order
+		Warehouse
+
+------------
+Create a Kubernetes Container			
+------------
